@@ -45,6 +45,7 @@ export default function Level1() {
       <div className="bg-white/90 rounded-xl p-8 shadow-lg max-w-2xl w-full text-center">
         <h2 className="text-2xl font-semibold">Level 1</h2>
         <p className="mt-2">Drag with mouse or use keyboard</p>
+        <p>Click on a cell to mark it</p>
 
         <div
           className="grid grid-cols-5 gap-2 mt-6"
