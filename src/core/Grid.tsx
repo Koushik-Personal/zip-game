@@ -14,7 +14,6 @@ interface GridProps {
 }
 
 export default function Grid({
-  rows,
   cols,
   cells,
   onCellHover,
