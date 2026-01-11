@@ -5,6 +5,9 @@ export default function Level1() {
   const TOTAL = GRID_SIZE * GRID_SIZE;
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [prevVisitedCells, setPrevVisitedCells] = useState(
+    new Set<number>([0])
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [visitedCells, setVisitedCells] = useState<Set<number>>(new Set([0]));
 
@@ -49,23 +52,36 @@ export default function Level1() {
 
         <div
           className="grid grid-cols-5 gap-2 mt-6"
-          onMouseUp={() => {
+          onPointerUp={() => {
             setIsDragging(false);
           }}
-          onMouseLeave={() => setIsDragging(false)}
+          onPointerLeave={() => setIsDragging(false)}
         >
           {[...Array(TOTAL)].map((_, index) => (
             <div
               key={index}
-              onMouseDown={() => {
+              onPointerDown={() => {
                 setIsDragging(true);
                 setActiveIndex(index);
-                setVisitedCells((prev) => new Set(prev).add(index));
-              }}
-              onMouseEnter={() => {
-                if (isDragging) setActiveIndex(index);
-                if (isDragging)
+
+                if (visitedCells.has(index)) {
+                  visitedCells.delete(index);
+                } else {
                   setVisitedCells((prev) => new Set(prev).add(index));
+                }
+                setPrevVisitedCells(visitedCells);
+              }}
+              onPointerEnter={() => {
+                if (isDragging) setActiveIndex(index);
+
+                if (isDragging && visitedCells.has(index)) {
+                  visitedCells.delete(index);
+                } else if (isDragging) {
+                  setVisitedCells((prev) => new Set(prev).add(index));
+                  setPrevVisitedCells(visitedCells);
+                } else { 
+                  setActiveIndex(index);
+                }
               }}
               className={`
                 aspect-square rounded-lg flex items-center justify-center
