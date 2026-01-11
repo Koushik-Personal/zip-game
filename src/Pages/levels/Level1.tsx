@@ -5,7 +5,7 @@ export default function Level1() {
   const TOTAL = GRID_SIZE * GRID_SIZE;
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prevVisitedCells, setPrevVisitedCells] = useState(
+  const [, setPrevVisitedCells] = useState(
     new Set<number>([0])
   );
   const [isDragging, setIsDragging] = useState(false);
