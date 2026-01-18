@@ -161,7 +161,7 @@ export default function Level1() {
         </div>
 
         <div
-          className={`grid grid-cols-${GRID_SIZE} gap-2 mt-6 touch-none`}
+          className={`grid grid-cols-5 gap-2 mt-6 touch-none`}
           onPointerMove={handlePointerMove}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
