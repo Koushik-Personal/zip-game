@@ -197,8 +197,6 @@ export default function Level1() {
               NUMBER_POSITIONS,
             });
           })}
-
-
         </div>
 
         <div className="flex gap-4 justify-center mt-8 flex-wrap">
