@@ -1,81 +1,148 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import GameCell from "../../components/games/GameCell";
+const GRID_SIZE = 5;
+const TOTAL = GRID_SIZE * GRID_SIZE;
+
+const NUMBER_POSITIONS = new Map<number, number>([
+  [0, 1],
+  [9, 2],
+  [2, 3],
+  [15, 4],
+  [19, 5],
+]);
+
+const STARTING_INDEX = NUMBER_POSITIONS.entries().next().value?.[0] || 0;
 
 export default function Level1() {
-  const GRID_SIZE = 5;
-  const TOTAL = GRID_SIZE * GRID_SIZE;
-
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(STARTING_INDEX);
   const [isDragging, setIsDragging] = useState(false);
-  const [visitedCells, setVisitedCells] = useState<Set<number>>(new Set([0]));
+  const [visitedCells, setVisitedCells] = useState<Set<number>>(
+    new Set([STARTING_INDEX]),
+  );
 
-  // Helper to update cells safely
-  const toggleCell = (index: number) => {
+  // To keep track of the order of visited cells for potential undo functionality
+  // user want go back to previous cell
+  const [visitedOrder, setVisitedOrder] = useState<number[]>([STARTING_INDEX]);
+
+  // Handle win condition
+  useEffect(() => {
+    if (visitedCells.size === TOTAL) {
+      alert("You Win!");
+    }
+  }, [visitedCells]);
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    const element = document.elementFromPoint(e.clientX, e.clientY);
+    const cellIndex = parseInt(element?.getAttribute("data-index") || "-1");
+    if (cellIndex !== -1 && cellIndex !== activeIndex) {
+      toggleCell(cellIndex);
+    }
+  };
+
+  const toggleCell = useCallback((index: number) => {
+
+    console.log(index);
+    
+    // checking for invalid index
+    const prevVisitedIndex = visitedOrder[visitedOrder.length - 1];
+    if (
+      prevVisitedIndex + GRID_SIZE !== index &&
+      prevVisitedIndex - GRID_SIZE !== index &&
+      prevVisitedIndex + 1 !== index &&
+      prevVisitedIndex - 1 !== index
+    )
+      return;
+
+    // prevent duplicate click
+    if (visitedCells.has(index)) {
+      if (visitedOrder[visitedOrder.length - 2] === index) {
+        // console.log("visited Cells: ", visitedCells);
+        // console.log("visited Orders: ", visitedOrder);
+        visitedCells.delete(visitedOrder.pop() || 0);
+        visitedCells.delete(visitedOrder.pop() || 0);
+        setActiveIndex(index);
+        setVisitedCells((prev) => {
+          const next = new Set(prev);
+          next.add(index);
+          return next;
+        });
+        setVisitedOrder((prev) => [...prev, index]);
+      }
+
+      return;
+    }
+
+    // checking for invalid index
+    // if( () )
+
     setActiveIndex(index);
     setVisitedCells((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
+      next.add(index);
       return next;
     });
-  };
+    setVisitedOrder((prev) => [...prev, index]);
+  }, [visitedOrder, visitedCells]);
 
-  // Keyboard Navigation
+  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      setActiveIndex((prev) => {
-        const row = Math.floor(prev / GRID_SIZE);
-        const col = prev % GRID_SIZE;
-        let next = prev;
+      const row = Math.floor(activeIndex / GRID_SIZE);
+      const col = activeIndex % GRID_SIZE;
 
-        switch (e.key) {
-          case "ArrowUp":
-          case "w":
-            if (row > 0) next = prev - GRID_SIZE;
-            break;
-          case "ArrowDown":
-          case "s":
-            if (row < GRID_SIZE - 1) next = prev + GRID_SIZE;
-            break;
-          case "ArrowLeft":
-          case "a":
-            if (col > 0) next = prev - 1;
-            break;
-          case "ArrowRight":
-          case "d":
-            if (col < GRID_SIZE - 1) next = prev + 1;
-            break;
-          default:
-            return prev;
-        }
+      let next = activeIndex;
 
-        // Auto-fill when using keyboard
-        setVisitedCells((prevSet) => new Set(prevSet).add(next));
-        return next;
-      });
+      switch (e.key) {
+        case "ArrowUp":
+        case "w":
+          if (row > 0) next = activeIndex - GRID_SIZE;
+          break;
+
+        case "ArrowDown":
+        case "s":
+          if (row < GRID_SIZE - 1) next = activeIndex + GRID_SIZE;
+          break;
+
+        case "ArrowLeft":
+        case "a":
+          if (col > 0) next = activeIndex - 1;
+          break;
+
+        case "ArrowRight":
+        case "d":
+          if (col < GRID_SIZE - 1) next = activeIndex + 1;
+          break;
+
+        default:
+          return;
+      }
+
+      // 🔑 IMPORTANT: use the same logic as mouse
+      if (next !== activeIndex) {
+        toggleCell(next);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [activeIndex, toggleCell, visitedCells, visitedOrder]);
 
-  // Touch/Mouse Drag Handler
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
+  // Reset the grid
+  const resetGrid = () => {
+    setActiveIndex(STARTING_INDEX);
+    visitedCells.clear();
+    setVisitedCells(new Set([STARTING_INDEX]));
+    setVisitedOrder([STARTING_INDEX]);
+  };
 
-    // Detect element under finger/cursor
-    const element = document.elementFromPoint(e.clientX, e.clientY);
-    const cellIndexRaw = element?.getAttribute("data-index");
-
-    if (cellIndexRaw !== null && cellIndexRaw !== undefined) {
-      const index = parseInt(cellIndexRaw);
-      // Only trigger if we moved into a different cell
-      if (index !== activeIndex) {
-        toggleCell(index);
-      }
-    }
+  // Undo the last visited cell
+  const handleUndo = () => {
+    if (visitedOrder.length <= 1) return;
+    const previousIndex = visitedOrder[visitedOrder.length - 2];
+    setActiveIndex(previousIndex);
+    setVisitedCells(new Set(visitedOrder.slice(0, -1)));
+    setVisitedOrder((prev) => prev.slice(0, -1));
   };
 
   return (
@@ -94,48 +161,63 @@ export default function Level1() {
         </div>
 
         <div
-          className="grid grid-cols-5 gap-2 mt-6 touch-none"
+          className={`grid grid-cols-${GRID_SIZE} gap-2 mt-6 touch-none`}
           onPointerMove={handlePointerMove}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
-          style={{ touchAction: "none" }} // Prevents mobile pull-to-refresh/scrolling
         >
-          {[...Array(TOTAL)].map((_, index) => (
-            <div
-              key={index}
-              data-index={index} // Identity for elementFromPoint
-              onPointerDown={(e) => {
-                // Ensure touch doesn't trigger scroll
-                if (e.pointerType === "touch") {
-                  (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-                }
-                setIsDragging(true);
-                toggleCell(index);
-              }}
-              className={`
-                aspect-square rounded-lg flex items-center justify-center
-                text-xl font-bold cursor-pointer select-none
-                transition-all duration-150 ease-in-out
-                ${
-                  index === activeIndex
-                    ? "bg-blue-600 text-white scale-105 shadow-md z-10"
-                    : visitedCells.has(index)
-                    ? "bg-green-600"
-                    : "bg-blue-200 hover:bg-blue-300"
-                }
-              `}
-            >
-              {index === activeIndex && "●"}
-            </div>
-          ))}
+          {/* {[...Array(TOTAL)].map((_, index) => {
+            const isVisitedAt = (i: number) => visitedCells.has(i);
+
+            const hasUp = isVisitedAt(index - GRID_SIZE);
+            const hasDown = isVisitedAt(index + GRID_SIZE);
+            const hasLeft = index % GRID_SIZE !== 0 && isVisitedAt(index - 1);
+            const hasRight =
+              index % GRID_SIZE !== GRID_SIZE - 1 && isVisitedAt(index + 1);
+
+            return GameCell({
+              index,
+              isActive: index === activeIndex,
+              isVisited: visitedCells.has(index),
+              hasUp,
+              hasDown,
+              hasLeft,
+              hasRight,
+              onPointerDown: () => setIsDragging(true),
+              NUMBER_POSITIONS,
+            });
+          })} */}
+
+          {[...Array(TOTAL)].map((_, index) => {
+            return GameCell({
+              index,
+              isActive: index === activeIndex,
+              isVisited: visitedCells.has(index),
+              onPointerDown: () => setIsDragging(true),
+              NUMBER_POSITIONS,
+            });
+          })}
+
+
         </div>
 
-        <button
-          onClick={() => setVisitedCells(new Set([0]))}
-          className="mt-8 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
-        >
-          Reset Grid
-        </button>
+        <div className="flex gap-4 justify-center mt-8 flex-wrap">
+          <button
+            onClick={resetGrid}
+            className="px-6 py-3 bg-linear-to-br from-blue-500 to-blue-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150"
+          >
+            Reset Grid
+          </button>
+          <button className="px-6 py-3 bg-linear-to-br from-purple-500 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150">
+            💡 Hint
+          </button>
+          <button
+            className="px-6 py-3 bg-linear-to-br from-orange-500 to-orange-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150"
+            onClick={handleUndo}
+          >
+            ↶ Undo
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ export default function Grid({
             aspect-square rounded-lg transition-all duration-200 flex items-center justify-center text-2xl font-bold
             ${
               !cell.isRevealed
-                ? "bg-gradient-to-br from-blue-400 to-blue-600 shadow-md"
+                ? "bg-linear-to-br from-blue-400 to-blue-600 shadow-md"
                 : cell.isMine
                 ? "bg-red-500 text-white shadow-inner"
                 : "bg-green-500 text-white shadow-inner"
