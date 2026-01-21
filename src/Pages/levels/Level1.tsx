@@ -149,7 +149,7 @@ export default function Level1() {
     <div className="min-h-[80vh] flex items-center justify-center p-8">
       <div className="bg-white/90 rounded-xl p-8 shadow-lg max-w-2xl w-full text-center">
         <h2 className="text-2xl font-semibold">Level 1</h2>
-        <p className="mt-2 text-gray-600">Drag to paint • Arrows to move</p>
+        <p className="mt-2f text-gray-600">Drag to paint • Arrows to move</p>
 
         <div className="mt-4 flex justify-center gap-4 text-sm font-medium">
           <span className="flex items-center gap-1">
@@ -166,14 +166,35 @@ export default function Level1() {
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
         >
-          {/* {[...Array(TOTAL)].map((_, index) => {
-            const isVisitedAt = (i: number) => visitedCells.has(i);
+          {[...Array(TOTAL)].map((_, index) => {
+            const pathArray = Array.from(visitedCells);
+            const currentPathIndex = pathArray.indexOf(index);
 
-            const hasUp = isVisitedAt(index - GRID_SIZE);
-            const hasDown = isVisitedAt(index + GRID_SIZE);
-            const hasLeft = index % GRID_SIZE !== 0 && isVisitedAt(index - 1);
-            const hasRight =
-              index % GRID_SIZE !== GRID_SIZE - 1 && isVisitedAt(index + 1);
+            // Only show connections if this cell is in the path
+            let hasUp = false;
+            let hasDown = false;
+            let hasLeft = false;
+            let hasRight = false;
+
+            if (currentPathIndex !== -1) {
+              // Check previous cell in path sequence
+              if (currentPathIndex > 0) {
+                const prevCell = pathArray[currentPathIndex - 1];
+                if (prevCell === index - GRID_SIZE) hasUp = true;
+                if (prevCell === index + GRID_SIZE) hasDown = true;
+                if (prevCell === index - 1) hasLeft = true;
+                if (prevCell === index + 1) hasRight = true;
+              }
+
+              // Check next cell in path sequence
+              if (currentPathIndex < pathArray.length - 1) {
+                const nextCell = pathArray[currentPathIndex + 1];
+                if (nextCell === index - GRID_SIZE) hasUp = true;
+                if (nextCell === index + GRID_SIZE) hasDown = true;
+                if (nextCell === index - 1) hasLeft = true;
+                if (nextCell === index + 1) hasRight = true;
+              }
+            }
 
             return GameCell({
               index,
@@ -186,9 +207,9 @@ export default function Level1() {
               onPointerDown: () => setIsDragging(true),
               NUMBER_POSITIONS,
             });
-          })} */}
+          })}
 
-          {[...Array(TOTAL)].map((_, index) => {
+          {/* {[...Array(TOTAL)].map((_, index) => {
             return GameCell({
               index,
               isActive: index === activeIndex,
@@ -196,7 +217,7 @@ export default function Level1() {
               onPointerDown: () => setIsDragging(true),
               NUMBER_POSITIONS,
             });
-          })}
+          })} */}
         </div>
 
         <div className="flex gap-4 justify-center mt-8 flex-wrap">
