@@ -53,7 +53,7 @@ export default function GameCell({
       )}
 
       {/* Number display */}
-      <div className="relative z-10">
+      <div className="relative z-10 sm:text-xl md:text-2xl">
         {NUMBER_POSITIONS.has(index) &&
           NumberShowing({ number: NUMBER_POSITIONS.get(index)! })}
       </div>
