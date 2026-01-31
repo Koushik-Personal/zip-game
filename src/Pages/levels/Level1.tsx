@@ -7,10 +7,12 @@ const TOTAL = GRID_SIZE * GRID_SIZE;
 const NUMBER_POSITIONS = new Map<number, number>([
   [0, 1],
   [9, 2],
-  [2, 3],
+  [12, 3],
   [15, 4],
-  [19, 5],
+  [24, 5],
 ]);
+
+const ORDER_POSITION: number[] = [0, 9, 12, 15, 24];
 
 const STARTING_INDEX = NUMBER_POSITIONS.entries().next().value?.[0] || 0;
 
@@ -30,12 +32,12 @@ export default function Level1() {
 
   if (
     visitedCells.size === TOTAL &&
-    correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+    correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
     if (message !== "You Win!") setMessage("You Win!");
   } else if (
     visitedCells.size === TOTAL &&
-    !correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+    !correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
     if (message !== "Please selected correct order")
       setMessage("Please selected correct order");
