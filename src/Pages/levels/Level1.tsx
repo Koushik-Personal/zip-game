@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import GameCell from "../../components/games/GameCell";
+import correctOrderCheck from "../../hooks/correctOrderCheck";
 const GRID_SIZE = 5;
 const TOTAL = GRID_SIZE * GRID_SIZE;
 
@@ -24,12 +25,23 @@ export default function Level1() {
   // user want go back to previous cell
   const [visitedOrder, setVisitedOrder] = useState<number[]>([STARTING_INDEX]);
 
-  // Handle win condition
-  useEffect(() => {
-    if (visitedCells.size === TOTAL) {
-      alert("You Win!");
-    }
-  }, [visitedCells]);
+  // Derive message based on win condition
+  const [message, setMessage] = useState("");
+
+  if (
+    visitedCells.size === TOTAL &&
+    correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+  ) {
+    if (message !== "You Win!") setMessage("You Win!");
+  } else if (
+    visitedCells.size === TOTAL &&
+    !correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+  ) {
+    if (message !== "Please selected correct order")
+      setMessage("Please selected correct order");
+  } else {
+    if (message !== "") setMessage("");
+  }
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging) return;
@@ -40,50 +52,52 @@ export default function Level1() {
     }
   };
 
-  const toggleCell = useCallback((index: number) => {
+  const toggleCell = useCallback(
+    (index: number) => {
+      console.log(index);
 
-    console.log(index);
-    
-    // checking for invalid index
-    const prevVisitedIndex = visitedOrder[visitedOrder.length - 1];
-    if (
-      prevVisitedIndex + GRID_SIZE !== index &&
-      prevVisitedIndex - GRID_SIZE !== index &&
-      prevVisitedIndex + 1 !== index &&
-      prevVisitedIndex - 1 !== index
-    )
-      return;
+      // checking for invalid index
+      const prevVisitedIndex = visitedOrder[visitedOrder.length - 1];
+      if (
+        prevVisitedIndex + GRID_SIZE !== index &&
+        prevVisitedIndex - GRID_SIZE !== index &&
+        prevVisitedIndex + 1 !== index &&
+        prevVisitedIndex - 1 !== index
+      )
+        return;
 
-    // prevent duplicate click
-    if (visitedCells.has(index)) {
-      if (visitedOrder[visitedOrder.length - 2] === index) {
-        // console.log("visited Cells: ", visitedCells);
-        // console.log("visited Orders: ", visitedOrder);
-        visitedCells.delete(visitedOrder.pop() || 0);
-        visitedCells.delete(visitedOrder.pop() || 0);
-        setActiveIndex(index);
-        setVisitedCells((prev) => {
-          const next = new Set(prev);
-          next.add(index);
-          return next;
-        });
-        setVisitedOrder((prev) => [...prev, index]);
+      // prevent duplicate click
+      if (visitedCells.has(index)) {
+        if (visitedOrder[visitedOrder.length - 2] === index) {
+          // console.log("visited Cells: ", visitedCells);
+          // console.log("visited Orders: ", visitedOrder);
+          visitedCells.delete(visitedOrder.pop() || 0);
+          visitedCells.delete(visitedOrder.pop() || 0);
+          setActiveIndex(index);
+          setVisitedCells((prev) => {
+            const next = new Set(prev);
+            next.add(index);
+            return next;
+          });
+          setVisitedOrder((prev) => [...prev, index]);
+        }
+
+        return;
       }
 
-      return;
-    }
+      // checking for invalid index
+      // if( () )
 
-    // checking for invalid index
-    // if( () )
-
-    setActiveIndex(index);
-    setVisitedCells((prev) => {
-      const next = new Set(prev);
-      next.add(index);
-      return next;
-    });
-    setVisitedOrder((prev) => [...prev, index]);
-  }, [visitedOrder, visitedCells]);
+      setActiveIndex(index);
+      setVisitedCells((prev) => {
+        const next = new Set(prev);
+        next.add(index);
+        return next;
+      });
+      setVisitedOrder((prev) => [...prev, index]);
+    },
+    [visitedOrder, visitedCells],
+  );
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -161,7 +175,10 @@ export default function Level1() {
         </div>
 
         <div
-          className={`grid grid-cols-5 gap-2 mt-6 touch-none`}
+          className={`grid grid-cols-5 gap-2 mt-2 touch-none justify-center`}
+          style={{
+            gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(44px, 74px))`,
+          }}
           onPointerMove={handlePointerMove}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
@@ -220,6 +237,7 @@ export default function Level1() {
           })} */}
         </div>
 
+        {/* Buttons */}
         <div className="flex gap-4 justify-center mt-8 flex-wrap">
           <button
             onClick={resetGrid}
@@ -236,6 +254,11 @@ export default function Level1() {
           >
             ↶ Undo
           </button>
+        </div>
+
+        {/* This div will show the win , lose, or continue message */}
+        <div className="mt-4 text-lg font-semibold text-green-600">
+          {message}
         </div>
       </div>
     </div>
