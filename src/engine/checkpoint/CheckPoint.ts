@@ -11,7 +11,7 @@ export class CheckPoint {
      * @param count The number of checkpoints to generate (default 5).
      * @returns An array of flattened cell indices (0-24) representing the checkpoints.
      */
-    public static getCheckpoints(path: GridCoordinate[], count: number = 5): number[] {
+    public static getCheckpoints(path: GridCoordinate[], count: number = 8): number[] {
         if (!path || path.length === 0) {
             return [];
         }
