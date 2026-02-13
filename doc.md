@@ -54,3 +54,29 @@ The second weekend was about making the game challenging.
 ## 🧠 Key Learnings
 
 This project was a great way to see how **Data Structures and Algorithms (DSA)** apply to real-world fun. Transforming a simple grid into a functional game required a deep understanding of how to manage state and handle directional logic.
+
+---
+
+## 🤖 Phase 3: Path Generation & Automation
+
+**Date: 13-02-2026 17:13**
+
+I implemented an automated **Hamiltonian Path Generator** to create solvable levels dynamically.
+
+- **Backtracking Algorithm:** Ported a Java-based DFS backtracking solution to **TypeScript**.
+- **Randomized Paths:** The generator uses randomized directions to ensure a unique path is created every time.
+- **Verification:** Created a verification script to ensure the generated paths always cover the full 5x5 grid (length 25).
+- **Code Quality:** Refactored the generator into a clean `PathGenerator` class with proper JSDocs and type safety.
+
+---
+
+## 🎮 Phase 4: Dynamic Level Generation & Checkpoints
+
+**Date: 13-02-2026 18:45**
+
+I integrated the backend logic into the frontend (`Level1.tsx`) to make the game dynamic.
+
+- **Checkpoints:** Implemented a new `CheckPoint` class that takes the generated path and extracts specific nodes (1-5) as mandated stops.
+- **Dynamic Initialization:** Hooked the path generator into the `useEffect` lifecycle to create a fresh level layout every time the component mounts.
+- **Win Condition Logic:** Updated the win-check logic to verify that not only all cells are visited, but that the checkpoints (1 -> 2 -> 3 -> 4 -> 5) are visited in the correct order.
+- **UI Feedback:** Added console logs to debug path generation and ensure valid checkpoints are created.

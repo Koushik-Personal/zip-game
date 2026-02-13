@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 import GameCell from "../../components/games/GameCell";
 import correctOrderCheck from "../../hooks/correctOrderCheck";
+import {
+  PathGenerator,
+  type GridCoordinate,
+} from "../../engine/path/PathGenerator";
+import { CheckPoint } from "../../engine/checkpoint/CheckPoint";
+
 const GRID_SIZE = 5;
 const TOTAL = GRID_SIZE * GRID_SIZE;
 
-const NUMBER_POSITIONS = new Map<number, number>([
+let NUMBER_POSITIONS = new Map<number, number>([
   [0, 1],
   [9, 2],
-  [2, 3],
+  [12, 3],
   [15, 4],
-  [19, 5],
+  [24, 5],
 ]);
+
+let ORDER_POSITION: number[] = [0, 9, 12, 15, 24];
 
 const STARTING_INDEX = NUMBER_POSITIONS.entries().next().value?.[0] || 0;
 
@@ -28,14 +36,37 @@ export default function Level1() {
   // Derive message based on win condition
   const [message, setMessage] = useState("");
 
+      
+
+  useEffect(() => {
+    const generateNewLevel = () => {
+      const path: GridCoordinate[] | null =
+        PathGenerator.generateHamiltonianPath();
+      if (path) {
+        const checkpoints: number[] = CheckPoint.getCheckpoints(path);
+        console.log("checkpoints: ", checkpoints);
+        ORDER_POSITION = checkpoints;
+        NUMBER_POSITIONS = new Map<number, number>(
+          checkpoints.map((checkpoint, index) => [checkpoint, index + 1]),
+        );
+        setActiveIndex(NUMBER_POSITIONS.entries().next().value?.[0] || 0);
+        setVisitedCells(
+          new Set([NUMBER_POSITIONS.entries().next().value?.[0] || 0]),
+        );
+        setVisitedOrder([NUMBER_POSITIONS.entries().next().value?.[0] || 0]);
+      }
+    };
+    generateNewLevel();
+  }, []);
+
   if (
     visitedCells.size === TOTAL &&
-    correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+    correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
     if (message !== "You Win!") setMessage("You Win!");
   } else if (
     visitedCells.size === TOTAL &&
-    !correctOrderCheck({ visitedOrder, NUMBER_POSITIONS })
+    !correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
     if (message !== "Please selected correct order")
       setMessage("Please selected correct order");
@@ -149,7 +180,6 @@ export default function Level1() {
     setVisitedCells(new Set([STARTING_INDEX]));
     setVisitedOrder([STARTING_INDEX]);
   };
-
   // Undo the last visited cell
   const handleUndo = () => {
     if (visitedOrder.length <= 1) return;
