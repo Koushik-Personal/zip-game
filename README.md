@@ -80,7 +80,7 @@ To run ZIP GAME locally:
 
 **Kaushik Das**
 
-- LinkedIn: [Kaushik Das](https://www.linkedin.com/in/koushik-das-6804a81b2/)
+- LinkedIn: [Kaushik Das](www.linkedin.com/in/kd009/)
 
 ---
 
