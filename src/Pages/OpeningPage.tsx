@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
 
-export default function OpeningPage() {
-
+export default function Level1OpeningPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-8">
       <div className="flex flex-col items-center gap-4 bg-white/90 rounded-xl p-9 shadow-lg max-w-md w-full text-center">

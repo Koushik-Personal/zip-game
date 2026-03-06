@@ -1,12 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import OpeningPage from "./Pages/OpeningPage";
 import Game from "./Pages/Game";
 import Level1 from "./Pages/levels/Level1";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <OpeningPage />,
+    element: <Level1 />,
   },
   {
     path: "/game",

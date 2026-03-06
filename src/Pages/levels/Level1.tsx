@@ -35,6 +35,7 @@ export default function Level1() {
 
   // Derive message based on win condition
   const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("green");
 
   const [path, setPath] = useState<GridCoordinate[]>();
 
@@ -66,13 +67,18 @@ export default function Level1() {
     visitedCells.size === TOTAL &&
     correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
-    if (message !== "You Win!") setMessage("You Win!");
+    if (message !== "You Win!") {
+      setMessage("You Win!");
+      setMessageColor("green")
+    }
   } else if (
     visitedCells.size === TOTAL &&
     !correctOrderCheck({ visitedOrder, ORDER_POSITION })
   ) {
-    if (message !== "Please selected correct order")
-      setMessage("Please selected correct order");
+    if (message !== "Please selected correct order!") {
+      setMessage("Please selected correct order!");
+      setMessageColor("red")
+    }
   } else {
     if (message !== "") setMessage("");
   }
@@ -207,8 +213,9 @@ export default function Level1() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-8">
       <div className="bg-white/90 rounded-xl p-8 shadow-lg max-w-2xl w-full text-center">
-        <h2 className="text-2xl font-semibold">Level 1</h2>
-        <p className="mt-2f text-gray-600">Drag to paint • Arrows to move</p>
+        <h2 className="text-2xl font-semibold">ZIP GAME</h2>
+        <p className="mt-2f text-gray-600">Made By KAUSHIK DAS</p>
+        <p className="mt-5 text-gray-600">Drag to paint • Arrows to move</p>
 
         <div className="mt-4 flex justify-center gap-4 text-sm font-medium">
           <span className="flex items-center gap-1">
@@ -305,7 +312,7 @@ export default function Level1() {
         </div>
 
         {/* This div will show the win , lose, or continue message */}
-        <div className="mt-4 text-lg font-semibold text-green-600">
+        <div className={`mt-4 text-lg font-semibold text-${messageColor}-600`}>
           {message}
         </div>
       </div>
