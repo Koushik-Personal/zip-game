@@ -80,3 +80,15 @@ I integrated the backend logic into the frontend (`Level1.tsx`) to make the game
 - **Dynamic Initialization:** Hooked the path generator into the `useEffect` lifecycle to create a fresh level layout every time the component mounts.
 - **Win Condition Logic:** Updated the win-check logic to verify that not only all cells are visited, but that the checkpoints (1 -> 2 -> 3 -> 4 -> 5) are visited in the correct order.
 - **UI Feedback:** Added console logs to debug path generation and ensure valid checkpoints are created.
+
+---
+
+## 🛠 Phase 5: Helper Functions & Solve Mechanics
+
+**Date: 07-03-2026 02:54**
+
+I added a "Solve" mechanic to help players when they get stuck and refined the codebase for better maintainability.
+
+- **Solve Functionality:** Implemented a `handleSolve` function that utilizes the stored `path` to instantly visualize the solution. It calculates the flat grid indices from the Hamiltonian path coordinates and updates the state.
+- **State Management Refinement:** Simplified the path state handling and ensured the `visitedCells` set is correctly updated during manual and automated solving.
+- **Bug Fixes:** Resolved issues with checkpoint order verification and improved the visual feedback for connected path segments.

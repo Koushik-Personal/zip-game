@@ -36,6 +36,8 @@ export default function Level1() {
   // Derive message based on win condition
   const [message, setMessage] = useState("");
 
+  const [path, setPath] = useState<GridCoordinate[]>();
+
       
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function Level1() {
       const path: GridCoordinate[] | null =
         PathGenerator.generateHamiltonianPath();
       if (path) {
+        setPath(path);
         const checkpoints: number[] = CheckPoint.getCheckpoints(path);
         console.log("checkpoints: ", checkpoints);
         ORDER_POSITION = checkpoints;
@@ -180,6 +183,7 @@ export default function Level1() {
     setVisitedCells(new Set([STARTING_INDEX]));
     setVisitedOrder([STARTING_INDEX]);
   };
+
   // Undo the last visited cell
   const handleUndo = () => {
     if (visitedOrder.length <= 1) return;
@@ -187,6 +191,17 @@ export default function Level1() {
     setActiveIndex(previousIndex);
     setVisitedCells(new Set(visitedOrder.slice(0, -1)));
     setVisitedOrder((prev) => prev.slice(0, -1));
+  };
+
+  const handleSolve = () => {
+    if (!path || path.length === 0) return;
+
+    resetGrid();
+
+    const indices: number[] = path.map((coord) => coord.row * GRID_SIZE + coord.col);
+    
+    setVisitedCells( new Set(indices));
+
   };
 
   return (
@@ -275,8 +290,11 @@ export default function Level1() {
           >
             Reset Grid
           </button>
-          <button className="px-6 py-3 bg-linear-to-br from-purple-500 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150">
-            💡 Hint
+          <button
+            className="px-6 py-3 bg-linear-to-br from-purple-500 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150"
+            onClick={handleSolve}
+          >
+            💡 Solve
           </button>
           <button
             className="px-6 py-3 bg-linear-to-br from-orange-500 to-orange-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150"
