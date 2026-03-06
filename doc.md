@@ -10,7 +10,7 @@
 
 **Date: 08-01-2026**
 
-While commuting to the office with my friend Prince, I noticed him scrolling through LinkedIn. Instead of the usual posts, he was playing a minimalist **grid-based game**. After trying it myself, I found the mechanics fascinating.
+While coming to the office with my friend Prince, I noticed him playing a **grid-based game** on LinkedIn. After trying it by myself, I found the mechanics interesting.
 
 As I played, I immediately connected the movement to **Graph Theory**. In programming terms, a grid is a collection of nodes where each cell has edges connecting it to four directions (Up, Down, Left, Right). I took the initiative to build my own version over the following weekends.
 
@@ -19,7 +19,6 @@ As I played, I immediately connected the movement to **Graph Theory**. In progra
 ## 🛠 Phase 1: Research & Setup
 
 **Dates: 10-01-2026 to 11-01-2026**
-
 I spent the start of the weekend defining the logic and choosing a tech stack. I used AI as a sounding board to refine the architecture.
 
 ### Development Steps:

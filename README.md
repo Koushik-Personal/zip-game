@@ -1,73 +1,87 @@
-# React + TypeScript + Vite
+# ⚡ ZIP GAME
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimalist, high-stakes grid puzzle game built with **React**, **TypeScript**, and **Graph Theory**. Navigate through a 5x5 grid, visiting every single cell in a specific sequence to win.
 
-Currently, two official plugins are available:
+![ZIP GAME](/src/assets/logo.png) <!-- Note: Assuming there might be a logo or visual, user can add later -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🎮 How to Play
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Start at 0**: Your journey begins at the top-left corner.
+2. **Follow the Sequence**: Visit the numbered "Checkpoints" (1 → 2 → 3 → ...) in the correct order.
+3. **Fill the Grid**: You must visit **every single cell** exactly once (a Hamiltonian Path).
+4. **Controls**:
+   - **Mouse/Touch**: Click and drag to paint your path.
+   - **Keyboard**: Use Arrow Keys or `WASD` to move.
+   - **Undo**: Made a mistake? Hit `Undo` to step back.
+   - **Solve**: Feeling stuck? Use the `💡 Solve` button to see the solution.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Key Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Infinite Levels**: Levels are generated dynamically using a randomized Depth-First Search (DFS) algorithm, ensuring a unique puzzle every time you play.
+- **Smart Validation**: The game verifies your path in real-time, checking for illegal jumps or backtracking.
+- **Minimalist Aesthetic**: Clean, modern UI with smooth transitions and glassmorphism effects.
+- **Premium Solve Mechanics**: Watch the AI solve the grid step-by-step when you're stuck.
+- **Responsive Navigation**: Optimized for both desktop (keyboard) and mobile (touch/drag).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🧠 Behind the Scenes: The Algorithm
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The core of ZIP GAME is powered by a **Hamiltonian Path Generator**.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Graph Logic**: The 5x5 grid is treated as an undirected graph where each cell is a node connected to its neighbors.
+- **Recursive Backtracking**: The engine uses a randomized DFS to find a path that covers all 25 nodes.
+- **Dynamic Checkpoints**: Once a path is found, the `CheckPoint` engine extracts key indices to create the numbered sequence you see on the grid.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+> [!NOTE]
+> For a detailed look at the development journey, check out the [Development Log](doc.md).
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: [React 18](https://reactjs.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: React Hooks (`useState`, `useRef`, `useCallback`)
+
+---
+
+## 📥 Getting Started
+
+To run ZIP GAME locally:
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/yourusername/zip-game.git
+   cd zip-game
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 👤 Author
+
+**Kaushik Das**
+
+- LinkedIn: [Kaushik Das](https://www.linkedin.com/in/koushik-das-6804a81b2/)
+
+---
+
+_Inspired by minimalist grid puzzles and Graph Theory._
